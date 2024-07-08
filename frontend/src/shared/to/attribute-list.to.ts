@@ -1,8 +1,8 @@
 import { SortColumnsEnum } from '../enum/sort-columns.enum';
 import { SortDirectionEnum } from '../enum/sort-direction.enum';
 
-export interface AttributeListModel {
-  data: AttributeModel[];
+export interface AttributeListTO {
+  data: AttributeTO[];
   meta: {
     hasNextPage: boolean;
     limit: number;
@@ -13,15 +13,10 @@ export interface AttributeListModel {
   };
 }
 
-interface AttributeModel {
+interface AttributeTO {
   id: string;
   name: string;
   createdAt: string; // ISO 8601
-  labels: LabelModel[];
+  labelIds: string[];
   deleted: boolean;
-}
-
-export interface LabelModel {
-  id: string;
-  name: string;
 }
