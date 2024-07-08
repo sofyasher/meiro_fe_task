@@ -1,30 +1,25 @@
 import { SortColumnsEnum } from './enum/sort-columns.enum';
 import { SortDirectionEnum } from './enum/sort-direction.enum';
 import { ATTRIBUTE_LIST_URL, get, LABEL_LIST_URL } from './api';
-import { AttributeListModel, LabelModel } from './model/attribute-list.model';
+import { LabelModel } from './model/attribute-list.model';
 import { AttributeListTO } from './to/attribute-list.to';
-import { AttributeMapper } from './mapper/attribute.mapper';
 import { LabelListTO } from './to/label.to';
 
-export const fetchAttributes = async (
-  params: {
-    offset?: number;
-    limit?: number;
-    searchText?: string;
-    sortBy?: SortColumnsEnum;
-    sortDir?: SortDirectionEnum;
-  },
-  callbackFn: (attributes: AttributeListModel) => void,
-) => {
-  const attributesResponse = await get(ATTRIBUTE_LIST_URL);
-  const labels = await fetchLabels();
+export const fetchAttributes = async (params: {
+  offset?: number;
+  limit?: number;
+  searchText?: string;
+  sortBy?: SortColumnsEnum;
+  sortDir?: SortDirectionEnum;
+}): Promise<AttributeListTO> => {
+  const attributesResponse = await get(
+    `${ATTRIBUTE_LIST_URL}?offset=${params.offset}`,
+  );
 
-  attributesResponse.json().then((attributes: AttributeListTO) => {
-    callbackFn(AttributeMapper.convertTOToModel(attributes, labels));
-  });
+  return attributesResponse.json();
 };
 
-export const fetchLabels = async () => {
+export const fetchLabels = async (): Promise<LabelModel[]> => {
   let offset = 0;
   const limit = 10;
   let hasNextPage = true;

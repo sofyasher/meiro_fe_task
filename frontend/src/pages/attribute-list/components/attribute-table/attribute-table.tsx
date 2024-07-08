@@ -1,14 +1,19 @@
 import './attribute-table.scss';
-import { Container, Table } from 'react-bootstrap';
+import { Button, Container, Table } from 'react-bootstrap';
 import { AttributeListModel } from '../../../../shared/model/attribute-list.model';
 
 type AttributeTableProps = {
   attributes: AttributeListModel;
+  nextAttributesCallCallback: () => void;
 };
 
-const AttributeTable = ({ attributes }: AttributeTableProps) => {
+const AttributeTable = ({
+  attributes,
+  nextAttributesCallCallback,
+}: AttributeTableProps) => {
   return (
     <Container>
+      <Button onClick={nextAttributesCallCallback}>call</Button>
       <Table striped bordered hover size='sm'>
         <thead>
           <tr>
