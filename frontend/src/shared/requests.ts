@@ -5,6 +5,17 @@ import { LabelModel } from './model/attribute-list.model';
 import { AttributeListTO } from './to/attribute-list.to';
 import { LabelListTO } from './to/label.to';
 
+const queryParams = (params: {
+  [key: string]: string | number | undefined | null;
+}): string => {
+  const query = Object.entries(params)
+    .filter(([_, value]) => value !== undefined && value !== null)
+    .map(([key, value]) => `${key}=${value}`)
+    .join('&');
+
+  return !!query ? `?${query}` : '';
+};
+
 export const fetchAttributes = async (params: {
   offset?: number;
   limit?: number;
@@ -12,8 +23,10 @@ export const fetchAttributes = async (params: {
   sortBy?: SortColumnsEnum;
   sortDir?: SortDirectionEnum;
 }): Promise<AttributeListTO> => {
+  const { offset, searchText } = params;
+
   const attributesResponse = await get(
-    `${ATTRIBUTE_LIST_URL}?offset=${params.offset}`,
+    `${ATTRIBUTE_LIST_URL}${queryParams({ offset, searchText })}`,
   );
 
   return attributesResponse.json();

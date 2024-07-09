@@ -8,6 +8,7 @@ import {
   LabelModel,
 } from '../../shared/model/attribute-list.model';
 import { AttributeMapper } from '../../shared/mapper/attribute.mapper';
+import AttributeSearch from './components/attribute-search/attribute-search';
 
 const AttributeList = () => {
   const [labels, setLabels] = useState<LabelModel[]>([]);
@@ -15,6 +16,9 @@ const AttributeList = () => {
     AttributeListModel[]
   >([]);
   const [attributesOffset, setAttributesOffset] = useState<number>(0);
+  const [attributesSearchQuery, setAttributesSearchQuery] = useState<
+    string | undefined
+  >(undefined);
 
   const handleNextAttributesCall = (): void => {
     setAttributesOffset(
@@ -24,13 +28,19 @@ const AttributeList = () => {
     );
   };
 
+  const handleSearchQueryChanges = (searchQuery: string): void => {
+    setAttributesSearchQuery(searchQuery);
+  };
+
   useEffect(() => {
     fetchLabels().then((labels) => setLabels(labels));
   }, []);
 
   useEffect(() => {
     if (labels.length > 0) {
-      fetchAttributes({ offset: attributesOffset }).then((attributes) =>
+      fetchAttributes({
+        offset: attributesOffset,
+      }).then((attributes) =>
         setAttributesPaginated((prev) => [
           ...prev,
           AttributeMapper.convertTOToModel(attributes, labels),
@@ -39,9 +49,23 @@ const AttributeList = () => {
     }
   }, [labels, attributesOffset]);
 
+  useEffect(() => {
+    if (labels.length > 0) {
+      fetchAttributes({
+        offset: 0,
+        searchText: attributesSearchQuery,
+      }).then((attributes) =>
+        setAttributesPaginated((prev) => [
+          AttributeMapper.convertTOToModel(attributes, labels),
+        ]),
+      );
+    }
+  }, [labels, attributesSearchQuery]);
+
   return (
     <Container>
       <h1>Attribute list</h1>
+      <AttributeSearch onSearchCallback={handleSearchQueryChanges} />
       {attributesPaginated && (
         <AttributeTable
           attributesPaginated={attributesPaginated}
