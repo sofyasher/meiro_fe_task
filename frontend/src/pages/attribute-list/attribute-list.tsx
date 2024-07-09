@@ -11,15 +11,17 @@ import { AttributeMapper } from '../../shared/mapper/attribute.mapper';
 
 const AttributeList = () => {
   const [labels, setLabels] = useState<LabelModel[]>([]);
-  const [attributes, setAttributes] = useState<AttributeListModel | null>(null);
+  const [attributesPaginated, setAttributesPaginated] = useState<
+    AttributeListModel[]
+  >([]);
   const [attributesOffset, setAttributesOffset] = useState<number>(0);
-  const [nextAttributesCall, setNextAttributesCall] = useState<number>(0);
 
   const handleNextAttributesCall = (): void => {
     setAttributesOffset(
-      attributes?.meta.offset ? attributes.meta.offset + 10 : 0,
+      attributesPaginated.length > 0
+        ? attributesPaginated[attributesPaginated.length - 1].meta.offset + 1
+        : 0,
     );
-    setNextAttributesCall((prev) => prev + 1);
   };
 
   useEffect(() => {
@@ -27,20 +29,28 @@ const AttributeList = () => {
   }, []);
 
   useEffect(() => {
-    fetchAttributes({ offset: attributesOffset }).then((attributes) =>
-      setAttributes(AttributeMapper.convertTOToModel(attributes, labels)),
-    );
-  }, [labels, nextAttributesCall]);
+    if (labels.length > 0) {
+      fetchAttributes({ offset: attributesOffset }).then((attributes) =>
+        setAttributesPaginated((prev) => [
+          ...prev,
+          AttributeMapper.convertTOToModel(attributes, labels),
+        ]),
+      );
+    }
+  }, [labels, attributesOffset]);
 
   return (
-    <Container
-      fluid
-      className='vh-100 d-flex align-items-center justify-content-center'
-    >
+    <Container>
       <h1>Attribute list</h1>
-      {attributes && (
+      {attributesPaginated && (
         <AttributeTable
-          attributes={attributes}
+          attributesPaginated={attributesPaginated}
+          canCallNextAttributes={
+            attributesPaginated.length > 0
+              ? attributesPaginated[attributesPaginated.length - 1].meta
+                  .hasNextPage
+              : true
+          }
           nextAttributesCallCallback={handleNextAttributesCall}
         />
       )}

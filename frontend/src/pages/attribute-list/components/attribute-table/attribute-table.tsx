@@ -3,17 +3,23 @@ import { Button, Container, Table } from 'react-bootstrap';
 import { AttributeListModel } from '../../../../shared/model/attribute-list.model';
 
 type AttributeTableProps = {
-  attributes: AttributeListModel;
+  attributesPaginated: AttributeListModel[];
+  canCallNextAttributes: boolean;
   nextAttributesCallCallback: () => void;
 };
 
 const AttributeTable = ({
-  attributes,
+  attributesPaginated,
+  canCallNextAttributes,
   nextAttributesCallCallback,
 }: AttributeTableProps) => {
   return (
     <Container>
-      <Button onClick={nextAttributesCallCallback}>call</Button>
+      <Button
+        onClick={() => canCallNextAttributes && nextAttributesCallCallback()}
+      >
+        call
+      </Button>
       <Table striped bordered hover size='sm'>
         <thead>
           <tr>
@@ -24,18 +30,21 @@ const AttributeTable = ({
           </tr>
         </thead>
         <tbody>
-          {attributes &&
-            attributes.data.map((attribute, index) => (
-              <tr>
-                <td>{index + 1}</td>
-                <td>{attribute.name}</td>
-                <td>
-                  {attribute.labels &&
-                    attribute.labels.map((label) => label.name).join(',')}
-                </td>
-                <td>{new Date(attribute.createdAt).toLocaleDateString()}</td>
-              </tr>
-            ))}
+          {attributesPaginated.map((attributes, index1) => {
+            return attributes.data.map((attribute, index2) => {
+              return (
+                <tr key={attribute.id}>
+                  <td>{index1 * attributes.meta.limit + (index2 + 1)}</td>
+                  <td>{attribute.name}</td>
+                  <td>
+                    {attribute.labels &&
+                      attribute.labels.map((label) => label.name).join(', ')}
+                  </td>
+                  <td>{new Date(attribute.createdAt).toLocaleDateString()}</td>
+                </tr>
+              );
+            });
+          })}
         </tbody>
       </Table>
     </Container>
