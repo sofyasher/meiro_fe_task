@@ -2,7 +2,7 @@ import { SortColumnsEnum } from '../enum/sort-columns.enum';
 import { SortDirectionEnum } from '../enum/sort-direction.enum';
 
 export interface AttributeListTO {
-  data: AttributeTO[];
+  data: AttributeDataTO[];
   meta: {
     hasNextPage: boolean;
     limit: number;
@@ -13,7 +13,11 @@ export interface AttributeListTO {
   };
 }
 
-interface AttributeTO {
+export interface AttributeTO {
+  data: AttributeDataTO;
+}
+
+export interface AttributeDataTO {
   id: string;
   name: string;
   createdAt: string; // ISO 8601

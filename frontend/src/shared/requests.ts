@@ -1,9 +1,9 @@
 import { SortColumnsEnum } from './enum/sort-columns.enum';
 import { SortDirectionEnum } from './enum/sort-direction.enum';
 import { ATTRIBUTE_LIST_URL, get, LABEL_LIST_URL } from './api';
-import { LabelModel } from './model/attribute-list.model';
-import { AttributeListTO } from './to/attribute-list.to';
+import { AttributeListTO, AttributeTO } from './to/attribute-list.to';
 import { LabelListTO } from './to/label.to';
+import { LabelModel } from './model/label.model';
 
 const queryParams = (params: {
   [key: string]: string | number | undefined | null;
@@ -14,6 +14,14 @@ const queryParams = (params: {
     .join('&');
 
   return !!query ? `?${query}` : '';
+};
+
+export const fetchAttributeDetail = async (
+  id: string,
+): Promise<AttributeTO> => {
+  const attributeResponse = await get(`${ATTRIBUTE_LIST_URL}/${id}`);
+
+  return attributeResponse.json();
 };
 
 export const fetchAttributes = async (params: {
@@ -33,8 +41,8 @@ export const fetchAttributes = async (params: {
 };
 
 export const fetchLabels = async (): Promise<LabelModel[]> => {
-  let offset = 0;
   const limit = 10;
+  let offset = 0;
   let hasNextPage = true;
   const labels: LabelModel[] = [];
 

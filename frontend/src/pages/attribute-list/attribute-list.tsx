@@ -3,12 +3,10 @@ import { Container } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import { fetchAttributes, fetchLabels } from '../../shared/requests';
 import AttributeTable from './components/attribute-table/attribute-table';
-import {
-  AttributeListModel,
-  LabelModel,
-} from '../../shared/model/attribute-list.model';
-import { AttributeMapper } from '../../shared/mapper/attribute.mapper';
+import { AttributeListModel } from '../../shared/model/attribute-list.model';
+import { AttributeListMapper } from '../../shared/mapper/attribute-list.mapper';
 import AttributeSearch from './components/attribute-search/attribute-search';
+import { LabelModel } from '../../shared/model/label.model';
 
 const AttributeList = () => {
   const [labels, setLabels] = useState<LabelModel[]>([]);
@@ -43,7 +41,7 @@ const AttributeList = () => {
       }).then((attributes) =>
         setAttributesPaginated((prev) => [
           ...prev,
-          AttributeMapper.convertTOToModel(attributes, labels),
+          AttributeListMapper.convertTOToModel(attributes, labels),
         ]),
       );
     }
@@ -56,7 +54,7 @@ const AttributeList = () => {
         searchText: attributesSearchQuery,
       }).then((attributes) =>
         setAttributesPaginated((prev) => [
-          AttributeMapper.convertTOToModel(attributes, labels),
+          AttributeListMapper.convertTOToModel(attributes, labels),
         ]),
       );
     }
