@@ -1,7 +1,11 @@
 import './attribute-list.scss';
 import { Container } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
-import { fetchAttributes, fetchLabels } from '../../shared/requests';
+import {
+  deleteAttribute,
+  fetchAttributes,
+  fetchLabels,
+} from '../../shared/requests';
 import AttributeTable from './components/attribute-table/attribute-table';
 import { AttributeListModel } from '../../shared/model/attribute-list.model';
 import { AttributeListMapper } from '../../shared/mapper/attribute-list.mapper';
@@ -17,6 +21,7 @@ const AttributeList = () => {
   const [attributesSearchQuery, setAttributesSearchQuery] = useState<
     string | undefined
   >(undefined);
+  const [refresh, setRefresh] = useState<number>(0);
 
   const handleNextAttributesCall = (): void => {
     setAttributesOffset(
@@ -28,6 +33,14 @@ const AttributeList = () => {
 
   const handleSearchQueryChanges = (searchQuery: string): void => {
     setAttributesSearchQuery(searchQuery);
+  };
+
+  const handleOnDelete = (id: string): void => {
+    deleteAttribute(id).then((response) => {
+      if (response.ok) {
+        setRefresh((prev) => prev + 1);
+      }
+    });
   };
 
   useEffect(() => {
@@ -53,12 +66,12 @@ const AttributeList = () => {
         offset: 0,
         searchText: attributesSearchQuery,
       }).then((attributes) =>
-        setAttributesPaginated((prev) => [
+        setAttributesPaginated([
           AttributeListMapper.convertTOToModel(attributes, labels),
         ]),
       );
     }
-  }, [labels, attributesSearchQuery]);
+  }, [labels, attributesSearchQuery, refresh]);
 
   return (
     <Container>
@@ -74,6 +87,7 @@ const AttributeList = () => {
               : true
           }
           nextAttributesCallCallback={handleNextAttributesCall}
+          onDeleteCallback={(id) => handleOnDelete(id)}
         />
       )}
     </Container>

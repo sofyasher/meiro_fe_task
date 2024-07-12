@@ -1,6 +1,6 @@
 import { SortColumnsEnum } from './enum/sort-columns.enum';
 import { SortDirectionEnum } from './enum/sort-direction.enum';
-import { ATTRIBUTE_LIST_URL, get, LABEL_LIST_URL } from './api';
+import { ApiMethods, ATTRIBUTE_LIST_URL, LABEL_LIST_URL } from './api';
 import { AttributeListTO, AttributeTO } from './to/attribute-list.to';
 import { LabelListTO } from './to/label.to';
 import { LabelModel } from './model/label.model';
@@ -19,7 +19,7 @@ const queryParams = (params: {
 export const fetchAttributeDetail = async (
   id: string,
 ): Promise<AttributeTO> => {
-  const attributeResponse = await get(`${ATTRIBUTE_LIST_URL}/${id}`);
+  const attributeResponse = await ApiMethods.get(`${ATTRIBUTE_LIST_URL}/${id}`);
 
   return attributeResponse.json();
 };
@@ -33,7 +33,7 @@ export const fetchAttributes = async (params: {
 }): Promise<AttributeListTO> => {
   const { offset, searchText } = params;
 
-  const attributesResponse = await get(
+  const attributesResponse = await ApiMethods.get(
     `${ATTRIBUTE_LIST_URL}${queryParams({ offset, searchText })}`,
   );
 
@@ -47,15 +47,19 @@ export const fetchLabels = async (): Promise<LabelModel[]> => {
   const labels: LabelModel[] = [];
 
   while (hasNextPage) {
-    const response = await get(
-      `${LABEL_LIST_URL}?offset=${offset}&limit=${limit}`,
+    const response = await ApiMethods.get(
+      `${LABEL_LIST_URL}${queryParams({ offset, limit })}`,
     );
     const json: LabelListTO = (await response.json()) as LabelListTO;
 
     labels.push(...json.data);
     hasNextPage = json.meta.hasNextPage;
-    offset += 10;
+    offset += limit;
   }
 
   return labels;
+};
+
+export const deleteAttribute = async (id: string): Promise<Response> => {
+  return ApiMethods.delete(`${ATTRIBUTE_LIST_URL}/${id}`);
 };
