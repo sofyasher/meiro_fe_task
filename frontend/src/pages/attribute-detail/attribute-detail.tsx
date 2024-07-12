@@ -1,5 +1,5 @@
 import './attribute-detail.scss';
-import { Button, Container } from 'react-bootstrap';
+import { Button, Card, Container } from 'react-bootstrap';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { AttributeDataModel } from '../../shared/model/attribute-data.model';
@@ -42,18 +42,24 @@ const AttributeDetail = () => {
   }, [id, labels]);
 
   return (
-    <Container
-      fluid
-      className='vh-100 d-flex align-items-center justify-content-center'
-    >
+    <Container fluid className='vh-100 d-flex justify-content-center mt-4'>
       {!!attribute ? (
-        <>
-          <Container>
+        <Container>
+          <Container className='d-flex align-items-center justify-content-between mb-4'>
             <Link to='/attributes'>Back</Link>
             <Button onClick={() => handleOnDelete(id!)}>Delete</Button>
           </Container>
-          <h1>{attribute?.name}</h1>
-        </>
+          <Card className='text-start'>
+            <Card.Body>
+              <Card.Title>{attribute?.name}</Card.Title>
+              <Card.Text>
+                {attribute.labels.map((label) => (
+                  <div>{label.name}</div>
+                ))}
+              </Card.Text>
+            </Card.Body>
+          </Card>
+        </Container>
       ) : (
         <Container>Attribute not found</Container>
       )}
