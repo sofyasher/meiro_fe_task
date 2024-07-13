@@ -2,6 +2,8 @@ import './attribute-table.scss';
 import { Button, Container, Table } from 'react-bootstrap';
 import { AttributeListModel } from '../../../../shared/model/attribute-list.model';
 import { Link } from 'react-router-dom';
+import { useEffect } from 'react';
+import { routes } from '../../../../shared/routes';
 
 type AttributeTableProps = {
   attributesPaginated: AttributeListModel[];
@@ -16,13 +18,23 @@ const AttributeTable = ({
   nextAttributesCallCallback,
   onDeleteCallback,
 }: AttributeTableProps) => {
+  useEffect(() => {
+    const handleScroll = () => {
+      const { scrollTop, clientHeight, scrollHeight } =
+        document.documentElement;
+      if (scrollTop + clientHeight >= scrollHeight) {
+        canCallNextAttributes && nextAttributesCallCallback();
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [nextAttributesCallCallback]);
+
   return (
     <Container>
-      <Button
-        onClick={() => canCallNextAttributes && nextAttributesCallCallback()}
-      >
-        call
-      </Button>
       <Table striped bordered hover size='sm'>
         <thead>
           <tr>
@@ -40,7 +52,7 @@ const AttributeTable = ({
                 <tr key={attribute.id}>
                   <td>{index1 * attributes.meta.limit + (index2 + 1)}</td>
                   <td>
-                    <Link to={`/attributes/${attribute.id}`}>
+                    <Link to={`${routes.attributes}/${attribute.id}`}>
                       {attribute.name}
                     </Link>
                   </td>

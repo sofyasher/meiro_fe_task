@@ -10,6 +10,7 @@ import {
 } from '../../shared/requests';
 import { AttributeDetailMapper } from '../../shared/mapper/attribute-detail.mapper';
 import { LabelModel } from '../../shared/model/label.model';
+import { routes } from '../../shared/routes';
 
 const AttributeDetail = () => {
   const { id } = useParams();
@@ -20,7 +21,7 @@ const AttributeDetail = () => {
   const handleOnDelete = (id: string) => {
     deleteAttribute(id).then((response) => {
       if (response.ok) {
-        navigate('/attributes');
+        navigate(routes.attributes);
       }
     });
   };
@@ -42,11 +43,11 @@ const AttributeDetail = () => {
   }, [id, labels]);
 
   return (
-    <Container fluid className='vh-100 d-flex justify-content-center mt-4'>
+    <Container fluid className='vh-100 d-flex justify-content-center top-80'>
       {!!attribute ? (
         <Container>
           <Container className='d-flex align-items-center justify-content-between mb-4'>
-            <Link to='/attributes'>Back</Link>
+            <Link to={routes.attributes}>Back</Link>
             <Button onClick={() => handleOnDelete(id!)}>Delete</Button>
           </Container>
           <Card className='text-start'>

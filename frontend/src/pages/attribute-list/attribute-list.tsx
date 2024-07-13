@@ -74,21 +74,23 @@ const AttributeList = () => {
   }, [labels, attributesSearchQuery, refresh]);
 
   return (
-    <Container>
+    <Container className='top-80'>
       <h1>Attribute list</h1>
       <AttributeSearch onSearchCallback={handleSearchQueryChanges} />
       {attributesPaginated && (
-        <AttributeTable
-          attributesPaginated={attributesPaginated}
-          canCallNextAttributes={
-            attributesPaginated.length > 0
-              ? attributesPaginated[attributesPaginated.length - 1].meta
-                  .hasNextPage
-              : true
-          }
-          nextAttributesCallCallback={handleNextAttributesCall}
-          onDeleteCallback={(id) => handleOnDelete(id)}
-        />
+        <div className='mt-4'>
+          <AttributeTable
+            attributesPaginated={attributesPaginated}
+            canCallNextAttributes={
+              attributesPaginated.length > 0
+                ? attributesPaginated[attributesPaginated.length - 1].meta
+                    .hasNextPage
+                : true
+            }
+            nextAttributesCallCallback={handleNextAttributesCall}
+            onDeleteCallback={(id) => handleOnDelete(id)}
+          />
+        </div>
       )}
     </Container>
   );
