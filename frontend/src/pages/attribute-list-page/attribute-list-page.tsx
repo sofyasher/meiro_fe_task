@@ -2,13 +2,16 @@ import './attribute-list-page.scss';
 import { Container } from 'react-bootstrap';
 import AttributeList from './components/attributes-list/attribute-list';
 import AttributeSearch from './components/attribute-search/attribute-search';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { AttributesService } from '../../shared/services/attributes.service';
 import { LabelModel } from '../../shared/model/label.model';
 import { usePrevious } from '../../shared/hooks/use-previous.hook';
 import { AttributeListModel } from '../../shared/model/attribute-list.model';
+import { LocalStorageService } from '../../shared/services/local-storage.service';
 
 const AttributeListPage = () => {
+  const initialQuery = LocalStorageService.getSearchQuery() ?? undefined;
+
   const [labels, setLabels] = useState<LabelModel[]>([]);
   const [attributesPaginated, setAttributesPaginated] = useState<
     AttributeListModel[]
@@ -16,32 +19,33 @@ const AttributeListPage = () => {
 
   const [attributesSearchQuery, setAttributesSearchQuery] = useState<
     string | undefined
-  >(undefined);
+  >(initialQuery);
 
   const [attributesOffset, setAttributesOffset] = useState<number>(0);
   const prevOffset = usePrevious<number>(attributesOffset);
 
   const [refresh, setRefresh] = useState<number>(0);
 
-  const handleSearchQueryChanges = (searchQuery: string): void => {
+  const handleSearchQueryChanges = useCallback((searchQuery: string): void => {
     setAttributesSearchQuery(searchQuery);
-  };
+    LocalStorageService.setSearchQuery(searchQuery);
+  }, []);
 
-  const handleNextAttributesCall = (): void => {
+  const handleNextAttributesCall = useCallback((): void => {
     setAttributesOffset(
       attributesPaginated.length > 0
         ? attributesPaginated[attributesPaginated.length - 1].meta.offset + 1
         : 0,
     );
-  };
+  }, []);
 
-  const handleOnDelete = (id: string): void => {
+  const handleOnDelete = useCallback((id: string): void => {
     AttributesService.deleteAttribute(id)
       .then((response) => {
         setRefresh((prev) => prev + 1);
       })
       .catch(() => alert('Failed to delete attribute'));
-  };
+  }, []);
 
   useEffect(() => {
     AttributesService.getAllLabelsAndFirstOffsetOfAttributes()
@@ -77,7 +81,10 @@ const AttributeListPage = () => {
   return (
     <Container className='top-80'>
       <h1>Attribute list</h1>
-      <AttributeSearch onSearchCallback={handleSearchQueryChanges} />
+      <AttributeSearch
+        initialValue={initialQuery}
+        onSearchCallback={handleSearchQueryChanges}
+      />
       <AttributeList
         attributesPaginated={attributesPaginated}
         handleNextAttributesCall={handleNextAttributesCall}
