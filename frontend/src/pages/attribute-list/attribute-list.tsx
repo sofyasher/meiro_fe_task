@@ -5,15 +5,18 @@ import AttributeTable from './components/attribute-table/attribute-table';
 import { AttributeListModel } from '../../shared/model/attribute-list.model';
 import AttributeSearch from './components/attribute-search/attribute-search';
 import { LabelModel } from '../../shared/model/label.model';
-import { AttributesApiService } from '../../shared/services/api/attributes-api.service';
 import { AttributesService } from '../../shared/services/attributes.service';
+import { usePrevious } from '../../shared/hooks/use-previous.hook';
 
 const AttributeList = () => {
   const [labels, setLabels] = useState<LabelModel[]>([]);
   const [attributesPaginated, setAttributesPaginated] = useState<
     AttributeListModel[]
   >([]);
+
   const [attributesOffset, setAttributesOffset] = useState<number>(0);
+  const prevOffset = usePrevious<number>(attributesOffset);
+
   const [attributesSearchQuery, setAttributesSearchQuery] = useState<
     string | undefined
   >(undefined);
@@ -32,47 +35,43 @@ const AttributeList = () => {
   };
 
   const handleOnDelete = (id: string): void => {
-    AttributesApiService.deleteAttribute(id).then((response) => {
-      if (response.ok) {
+    AttributesService.deleteAttribute(id)
+      .then((response) => {
         setRefresh((prev) => prev + 1);
-      }
-    });
+      })
+      .catch(() => alert('Failed to delete attribute'));
   };
 
   useEffect(() => {
-    AttributesService.getAllLabelsAndFirstOffsetOfAttributes().then(
-      ({ attributes, labels }) => {
+    AttributesService.getAllLabelsAndFirstOffsetOfAttributes()
+      .then(({ attributes, labels }) => {
         setAttributesPaginated([attributes]);
         setLabels(labels);
-      },
-    );
+      })
+      .catch(() => alert('Failed to load attributes'));
   }, []);
 
   useEffect(() => {
     if (labels.length > 0) {
       AttributesService.getNextAttributesAndSupplementByLabels(
         {
-          offset: attributesOffset,
+          // offset changed => we need to get next data,
+          // offset didn't change <=> query changed or refresh emitted => we need to get data from offset 0
+          offset: attributesOffset !== prevOffset ? attributesOffset : 0,
           searchText: attributesSearchQuery,
         },
         labels,
-      ).then((attributes) =>
-        setAttributesPaginated((prev) => [...prev, attributes]),
-      );
+      )
+        .then((attributes) =>
+          setAttributesPaginated((prev) =>
+            attributesOffset !== prevOffset
+              ? [...prev, attributes]
+              : [attributes],
+          ),
+        )
+        .catch(() => alert('Failed to load attributes'));
     }
-  }, [attributesOffset]);
-
-  useEffect(() => {
-    if (labels.length > 0) {
-      AttributesService.getNextAttributesAndSupplementByLabels(
-        {
-          offset: 0,
-          searchText: attributesSearchQuery,
-        },
-        labels,
-      ).then((attributes) => setAttributesPaginated([attributes]));
-    }
-  }, [attributesSearchQuery, refresh]);
+  }, [attributesOffset, attributesSearchQuery, refresh]);
 
   return (
     <Container className='top-80'>

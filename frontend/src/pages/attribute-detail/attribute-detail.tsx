@@ -3,41 +3,27 @@ import { Button, Card, Container } from 'react-bootstrap';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { AttributeDataModel } from '../../shared/model/attribute-data.model';
-import { AttributeDetailMapper } from '../../shared/mapper/attribute-detail.mapper';
-import { LabelModel } from '../../shared/model/label.model';
 import { routes } from '../../shared/routes';
-import { AttributesApiService } from '../../shared/services/api/attributes-api.service';
-import { LabelsApiService } from '../../shared/services/api/labels-api.service';
+import { AttributesService } from '../../shared/services/attributes.service';
 
 const AttributeDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [labels, setLabels] = useState<LabelModel[]>([]);
   const [attribute, setAttribute] = useState<AttributeDataModel | null>(null);
 
   const handleOnDelete = (id: string) => {
-    AttributesApiService.deleteAttribute(id).then((response) => {
-      if (response.ok) {
-        navigate(routes.attributes);
-      }
-    });
+    AttributesService.deleteAttribute(id)
+      .then((response) => navigate(routes.attributes))
+      .catch(() => alert('Failed to delete attribute'));
   };
 
   useEffect(() => {
-    LabelsApiService.getAllLabels().then((labels) => setLabels(labels));
-  }, []);
-
-  useEffect(() => {
-    if (!!id && labels.length > 0) {
-      AttributesApiService.getAttributeDetail(id)
-        .then((attribute) =>
-          setAttribute(
-            AttributeDetailMapper.convertTOToModel(attribute.data, labels),
-          ),
-        )
-        .catch(() => console.error(`Attribute with id ${id} not found`));
+    if (!!id) {
+      AttributesService.getAllLabelsAndAttributeById(id)
+        .then((attribute) => setAttribute(attribute))
+        .catch(() => alert(`Attribute with id ${id} not found`));
     }
-  }, [id, labels]);
+  }, [id]);
 
   return (
     <Container fluid className='vh-100 d-flex justify-content-center top-80'>
@@ -50,11 +36,12 @@ const AttributeDetail = () => {
           <Card className='text-start'>
             <Card.Body>
               <Card.Title>{attribute?.name}</Card.Title>
-              <Card.Text>
+              Labels:
+              <ul>
                 {attribute.labels.map((label) => (
-                  <div>{label.name}</div>
+                  <li key={'label-' + label.id}>{label.name}</li>
                 ))}
-              </Card.Text>
+              </ul>
             </Card.Body>
           </Card>
         </Container>

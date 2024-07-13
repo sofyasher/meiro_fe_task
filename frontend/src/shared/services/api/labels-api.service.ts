@@ -1,6 +1,7 @@
-import { API_URL, ApiMethods } from '../../api';
+import { API_URL } from '../../api';
 import { queryParams } from '../../utils';
 import { LabelListTO, LabelTO } from '../../to/label.to';
+import axios from 'axios';
 
 const LABEL_LIST_URL = `${API_URL}/labels`;
 
@@ -12,10 +13,10 @@ export class LabelsApiService {
     const labels: LabelTO[] = [];
 
     while (hasNextPage) {
-      const response = await ApiMethods.get(
+      const response = await axios.get<LabelListTO>(
         `${LABEL_LIST_URL}${queryParams({ offset, limit })}`,
       );
-      const json: LabelListTO = (await response.json()) as LabelListTO;
+      const json: LabelListTO = response.data;
 
       labels.push(...json.data);
 
