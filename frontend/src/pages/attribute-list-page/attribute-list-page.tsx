@@ -1,26 +1,31 @@
-import './attribute-list.scss';
+import './attribute-list-page.scss';
 import { Container } from 'react-bootstrap';
-import { useEffect, useState } from 'react';
-import AttributeTable from './components/attribute-table/attribute-table';
-import { AttributeListModel } from '../../shared/model/attribute-list.model';
+import AttributeList from './components/attributes-list/attribute-list';
 import AttributeSearch from './components/attribute-search/attribute-search';
-import { LabelModel } from '../../shared/model/label.model';
+import { useEffect, useState } from 'react';
 import { AttributesService } from '../../shared/services/attributes.service';
+import { LabelModel } from '../../shared/model/label.model';
 import { usePrevious } from '../../shared/hooks/use-previous.hook';
+import { AttributeListModel } from '../../shared/model/attribute-list.model';
 
-const AttributeList = () => {
+const AttributeListPage = () => {
   const [labels, setLabels] = useState<LabelModel[]>([]);
   const [attributesPaginated, setAttributesPaginated] = useState<
     AttributeListModel[]
   >([]);
 
-  const [attributesOffset, setAttributesOffset] = useState<number>(0);
-  const prevOffset = usePrevious<number>(attributesOffset);
-
   const [attributesSearchQuery, setAttributesSearchQuery] = useState<
     string | undefined
   >(undefined);
+
+  const [attributesOffset, setAttributesOffset] = useState<number>(0);
+  const prevOffset = usePrevious<number>(attributesOffset);
+
   const [refresh, setRefresh] = useState<number>(0);
+
+  const handleSearchQueryChanges = (searchQuery: string): void => {
+    setAttributesSearchQuery(searchQuery);
+  };
 
   const handleNextAttributesCall = (): void => {
     setAttributesOffset(
@@ -28,10 +33,6 @@ const AttributeList = () => {
         ? attributesPaginated[attributesPaginated.length - 1].meta.offset + 1
         : 0,
     );
-  };
-
-  const handleSearchQueryChanges = (searchQuery: string): void => {
-    setAttributesSearchQuery(searchQuery);
   };
 
   const handleOnDelete = (id: string): void => {
@@ -77,23 +78,13 @@ const AttributeList = () => {
     <Container className='top-80'>
       <h1>Attribute list</h1>
       <AttributeSearch onSearchCallback={handleSearchQueryChanges} />
-      {attributesPaginated && (
-        <div className='mt-4'>
-          <AttributeTable
-            attributesPaginated={attributesPaginated}
-            canCallNextAttributes={
-              attributesPaginated.length > 0
-                ? attributesPaginated[attributesPaginated.length - 1].meta
-                    .hasNextPage
-                : true
-            }
-            nextAttributesCallCallback={handleNextAttributesCall}
-            onDeleteCallback={(id) => handleOnDelete(id)}
-          />
-        </div>
-      )}
+      <AttributeList
+        attributesPaginated={attributesPaginated}
+        handleNextAttributesCall={handleNextAttributesCall}
+        handleOnDelete={handleOnDelete}
+      />
     </Container>
   );
 };
 
-export default AttributeList;
+export default AttributeListPage;
