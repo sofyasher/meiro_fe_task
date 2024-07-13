@@ -1,5 +1,6 @@
 import { SortColumnsEnum } from '../enum/sort-columns.enum';
 import { SortDirectionEnum } from '../enum/sort-direction.enum';
+import { AttributeDataTO } from './attribute-data.to';
 
 export interface AttributeListTO {
   data: AttributeDataTO[];
@@ -11,16 +12,4 @@ export interface AttributeListTO {
     sortBy: SortColumnsEnum;
     sortDir: SortDirectionEnum;
   };
-}
-
-export interface AttributeTO {
-  data: AttributeDataTO;
-}
-
-export interface AttributeDataTO {
-  id: string;
-  name: string;
-  createdAt: string; // ISO 8601
-  labelIds: string[];
-  deleted: boolean;
 }

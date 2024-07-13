@@ -1,6 +1,6 @@
-import { AttributeDataTO } from '../to/attribute-list.to';
 import { LabelModel } from '../model/label.model';
 import { AttributeDataModel } from '../model/attribute-data.model';
+import { AttributeDataTO } from '../to/attribute-data.to';
 
 export class AttributeDetailMapper {
   static convertTOToModel(

@@ -1,9 +1,10 @@
 import { SortColumnsEnum } from './enum/sort-columns.enum';
 import { SortDirectionEnum } from './enum/sort-direction.enum';
 import { ApiMethods, ATTRIBUTE_LIST_URL, LABEL_LIST_URL } from './api';
-import { AttributeListTO, AttributeTO } from './to/attribute-list.to';
+import { AttributeListTO } from './to/attribute-list.to';
 import { LabelListTO } from './to/label.to';
 import { LabelModel } from './model/label.model';
+import { AttributeTO } from './to/attribute.to';
 
 const queryParams = (params: {
   [key: string]: string | number | undefined | null;
