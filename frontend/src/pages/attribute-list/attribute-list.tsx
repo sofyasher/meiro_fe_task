@@ -1,16 +1,13 @@
 import './attribute-list.scss';
 import { Container } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
-import {
-  deleteAttribute,
-  fetchAttributes,
-  fetchLabels,
-} from '../../shared/requests';
 import AttributeTable from './components/attribute-table/attribute-table';
 import { AttributeListModel } from '../../shared/model/attribute-list.model';
 import { AttributeListMapper } from '../../shared/mapper/attribute-list.mapper';
 import AttributeSearch from './components/attribute-search/attribute-search';
 import { LabelModel } from '../../shared/model/label.model';
+import { AttributesApiService } from '../../shared/services/api/attributes-api.service';
+import { LabelsApiService } from '../../shared/services/api/labels-api.service';
 
 const AttributeList = () => {
   const [labels, setLabels] = useState<LabelModel[]>([]);
@@ -36,7 +33,7 @@ const AttributeList = () => {
   };
 
   const handleOnDelete = (id: string): void => {
-    deleteAttribute(id).then((response) => {
+    AttributesApiService.deleteAttribute(id).then((response) => {
       if (response.ok) {
         setRefresh((prev) => prev + 1);
       }
@@ -44,12 +41,12 @@ const AttributeList = () => {
   };
 
   useEffect(() => {
-    fetchLabels().then((labels) => setLabels(labels));
+    LabelsApiService.fetchLabels().then((labels) => setLabels(labels));
   }, []);
 
   useEffect(() => {
     if (labels.length > 0) {
-      fetchAttributes({
+      AttributesApiService.fetchAttributes({
         offset: attributesOffset,
       }).then((attributes) =>
         setAttributesPaginated((prev) => [
@@ -62,7 +59,7 @@ const AttributeList = () => {
 
   useEffect(() => {
     if (labels.length > 0) {
-      fetchAttributes({
+      AttributesApiService.fetchAttributes({
         offset: 0,
         searchText: attributesSearchQuery,
       }).then((attributes) =>

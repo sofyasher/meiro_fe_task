@@ -3,14 +3,11 @@ import { Button, Card, Container } from 'react-bootstrap';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { AttributeDataModel } from '../../shared/model/attribute-data.model';
-import {
-  deleteAttribute,
-  fetchAttributeDetail,
-  fetchLabels,
-} from '../../shared/requests';
 import { AttributeDetailMapper } from '../../shared/mapper/attribute-detail.mapper';
 import { LabelModel } from '../../shared/model/label.model';
 import { routes } from '../../shared/routes';
+import { AttributesApiService } from '../../shared/services/api/attributes-api.service';
+import { LabelsApiService } from '../../shared/services/api/labels-api.service';
 
 const AttributeDetail = () => {
   const { id } = useParams();
@@ -19,7 +16,7 @@ const AttributeDetail = () => {
   const [attribute, setAttribute] = useState<AttributeDataModel | null>(null);
 
   const handleOnDelete = (id: string) => {
-    deleteAttribute(id).then((response) => {
+    AttributesApiService.deleteAttribute(id).then((response) => {
       if (response.ok) {
         navigate(routes.attributes);
       }
@@ -27,12 +24,12 @@ const AttributeDetail = () => {
   };
 
   useEffect(() => {
-    fetchLabels().then((labels) => setLabels(labels));
+    LabelsApiService.fetchLabels().then((labels) => setLabels(labels));
   }, []);
 
   useEffect(() => {
     if (!!id && labels.length > 0) {
-      fetchAttributeDetail(id)
+      AttributesApiService.fetchAttributeDetail(id)
         .then((attribute) =>
           setAttribute(
             AttributeDetailMapper.convertTOToModel(attribute.data, labels),
