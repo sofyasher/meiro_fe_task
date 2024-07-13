@@ -24,12 +24,12 @@ const AttributeDetail = () => {
   };
 
   useEffect(() => {
-    LabelsApiService.fetchLabels().then((labels) => setLabels(labels));
+    LabelsApiService.getAllLabels().then((labels) => setLabels(labels));
   }, []);
 
   useEffect(() => {
     if (!!id && labels.length > 0) {
-      AttributesApiService.fetchAttributeDetail(id)
+      AttributesApiService.getAttributeDetail(id)
         .then((attribute) =>
           setAttribute(
             AttributeDetailMapper.convertTOToModel(attribute.data, labels),

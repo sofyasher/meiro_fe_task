@@ -41,12 +41,12 @@ const AttributeList = () => {
   };
 
   useEffect(() => {
-    LabelsApiService.fetchLabels().then((labels) => setLabels(labels));
+    LabelsApiService.getAllLabels().then((labels) => setLabels(labels));
   }, []);
 
   useEffect(() => {
     if (labels.length > 0) {
-      AttributesApiService.fetchAttributes({
+      AttributesApiService.getAttributes({
         offset: attributesOffset,
       }).then((attributes) =>
         setAttributesPaginated((prev) => [
@@ -59,7 +59,7 @@ const AttributeList = () => {
 
   useEffect(() => {
     if (labels.length > 0) {
-      AttributesApiService.fetchAttributes({
+      AttributesApiService.getAttributes({
         offset: 0,
         searchText: attributesSearchQuery,
       }).then((attributes) =>

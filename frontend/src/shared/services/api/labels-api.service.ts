@@ -2,11 +2,12 @@ import { API_URL, ApiMethods } from '../../api';
 import { queryParams } from '../../utils';
 import { LabelModel } from '../../model/label.model';
 import { LabelListTO } from '../../to/label.to';
+import { LabelDetailMapper } from '../../mapper/label-detail.mapper';
 
 const LABEL_LIST_URL = `${API_URL}/labels`;
 
 export class LabelsApiService {
-  static fetchLabels = async (): Promise<LabelModel[]> => {
+  static getAllLabels = async (): Promise<LabelModel[]> => {
     const limit = 10;
     let offset = 0;
     let hasNextPage = true;
@@ -18,7 +19,9 @@ export class LabelsApiService {
       );
       const json: LabelListTO = (await response.json()) as LabelListTO;
 
-      labels.push(...json.data);
+      labels.push(
+        ...json.data.map((label) => LabelDetailMapper.convertTOToModel(label)),
+      );
       hasNextPage = json.meta.hasNextPage;
       offset += limit;
     }

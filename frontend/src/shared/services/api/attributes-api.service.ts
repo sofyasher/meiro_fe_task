@@ -8,7 +8,7 @@ import { queryParams } from '../../utils';
 const ATTRIBUTE_LIST_URL = `${API_URL}/attributes`;
 
 export class AttributesApiService {
-  static fetchAttributes = async (params: {
+  static getAttributes = async (params: {
     offset?: number;
     limit?: number;
     searchText?: string;
@@ -24,7 +24,7 @@ export class AttributesApiService {
     return attributesResponse.json();
   };
 
-  static fetchAttributeDetail = async (id: string): Promise<AttributeTO> => {
+  static getAttributeDetail = async (id: string): Promise<AttributeTO> => {
     const attributeResponse = await ApiMethods.get(
       `${ATTRIBUTE_LIST_URL}/${id}`,
     );
