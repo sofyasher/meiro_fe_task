@@ -3,11 +3,10 @@ import { Container } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import AttributeTable from './components/attribute-table/attribute-table';
 import { AttributeListModel } from '../../shared/model/attribute-list.model';
-import { AttributeListMapper } from '../../shared/mapper/attribute-list.mapper';
 import AttributeSearch from './components/attribute-search/attribute-search';
 import { LabelModel } from '../../shared/model/label.model';
 import { AttributesApiService } from '../../shared/services/api/attributes-api.service';
-import { LabelsApiService } from '../../shared/services/api/labels-api.service';
+import { AttributesService } from '../../shared/services/attributes.service';
 
 const AttributeList = () => {
   const [labels, setLabels] = useState<LabelModel[]>([]);
@@ -41,34 +40,39 @@ const AttributeList = () => {
   };
 
   useEffect(() => {
-    LabelsApiService.getAllLabels().then((labels) => setLabels(labels));
+    AttributesService.getAllLabelsAndFirstOffsetOfAttributes().then(
+      ({ attributes, labels }) => {
+        setAttributesPaginated([attributes]);
+        setLabels(labels);
+      },
+    );
   }, []);
 
   useEffect(() => {
     if (labels.length > 0) {
-      AttributesApiService.getAttributes({
-        offset: attributesOffset,
-      }).then((attributes) =>
-        setAttributesPaginated((prev) => [
-          ...prev,
-          AttributeListMapper.convertTOToModel(attributes, labels),
-        ]),
+      AttributesService.getNextAttributesAndSupplementByLabels(
+        {
+          offset: attributesOffset,
+          searchText: attributesSearchQuery,
+        },
+        labels,
+      ).then((attributes) =>
+        setAttributesPaginated((prev) => [...prev, attributes]),
       );
     }
-  }, [labels, attributesOffset]);
+  }, [attributesOffset]);
 
   useEffect(() => {
     if (labels.length > 0) {
-      AttributesApiService.getAttributes({
-        offset: 0,
-        searchText: attributesSearchQuery,
-      }).then((attributes) =>
-        setAttributesPaginated([
-          AttributeListMapper.convertTOToModel(attributes, labels),
-        ]),
-      );
+      AttributesService.getNextAttributesAndSupplementByLabels(
+        {
+          offset: 0,
+          searchText: attributesSearchQuery,
+        },
+        labels,
+      ).then((attributes) => setAttributesPaginated([attributes]));
     }
-  }, [labels, attributesSearchQuery, refresh]);
+  }, [attributesSearchQuery, refresh]);
 
   return (
     <Container className='top-80'>

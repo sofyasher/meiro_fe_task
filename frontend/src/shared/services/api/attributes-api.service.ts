@@ -7,14 +7,18 @@ import { queryParams } from '../../utils';
 
 const ATTRIBUTE_LIST_URL = `${API_URL}/attributes`;
 
+export interface AttributesListQueryParams {
+  offset?: number;
+  limit?: number;
+  searchText?: string;
+  sortBy?: SortColumnsEnum;
+  sortDir?: SortDirectionEnum;
+}
+
 export class AttributesApiService {
-  static getAttributes = async (params: {
-    offset?: number;
-    limit?: number;
-    searchText?: string;
-    sortBy?: SortColumnsEnum;
-    sortDir?: SortDirectionEnum;
-  }): Promise<AttributeListTO> => {
+  static getAttributes = async (
+    params: AttributesListQueryParams,
+  ): Promise<AttributeListTO> => {
     const { offset, searchText } = params;
 
     const attributesResponse = await ApiMethods.get(
