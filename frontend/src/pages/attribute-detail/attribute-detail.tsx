@@ -31,9 +31,11 @@ const AttributeDetail = () => {
     <Container fluid className='vh-100 d-flex justify-content-center top-80'>
       {!!attribute ? (
         <Container>
-          <Container className='d-flex align-items-center justify-content-between mb-4'>
+          <Container className='d-flex align-items-center justify-content-between mb-4 p-0'>
             <Link to={routes.attributes}>Back</Link>
-            <Button onClick={() => handleOnDelete(id!)}>Delete</Button>
+            <Button variant='danger' onClick={() => handleOnDelete(id!)}>
+              Delete
+            </Button>
           </Container>
           <Card className='text-start'>
             <Card.Body>

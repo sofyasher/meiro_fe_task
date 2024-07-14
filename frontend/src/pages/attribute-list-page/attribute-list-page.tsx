@@ -2,7 +2,7 @@ import './attribute-list-page.scss';
 import { Container } from 'react-bootstrap';
 import AttributeList from './components/attributes-list/attribute-list';
 import AttributeSearch from './components/attribute-search/attribute-search';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AttributesService } from '../../shared/services/attributes.service';
 import { LabelModel } from '../../shared/model/label.model';
 import { AttributeListModel } from '../../shared/model/attribute-list.model';
@@ -31,9 +31,8 @@ const AttributeListPage = () => {
   >([]);
 
   const [filters, setFilters] = useState<Filters>(initialFilters);
-  const [refresh, setRefresh] = useState<number>(0);
 
-  const handleSearchTextChanges = useCallback((searchText: string): void => {
+  const handleSearchTextChanges = (searchText: string): void => {
     if (searchText === '') {
       setFilters((prev) => ({ ...prev, offset: 0, searchText: null }));
       LocalStorageService.removeSearchText();
@@ -41,7 +40,7 @@ const AttributeListPage = () => {
       setFilters((prev) => ({ ...prev, offset: 0, searchText }));
       LocalStorageService.setSearchText(searchText);
     }
-  }, []);
+  };
 
   const handleNextAttributesCall = (): void => {
     setFilters((prev) => ({
@@ -50,10 +49,41 @@ const AttributeListPage = () => {
     }));
   };
 
+  const getNextSortByCreatedAtDir = (
+    current: SortDirectionEnum | null,
+  ): SortDirectionEnum | null => {
+    const modes = [null, SortDirectionEnum.ASC, SortDirectionEnum.DESC];
+    const currentIndex = modes.findIndex((mode) => mode === current) ?? 0;
+    return modes[(currentIndex + 1) % modes.length];
+  };
+
+  const getNextSortByNameDir = (
+    current: SortDirectionEnum | null,
+  ): SortDirectionEnum | null => {
+    const modes = [SortDirectionEnum.ASC, SortDirectionEnum.DESC];
+    const currentIndex = modes.findIndex((mode) => mode === current) ?? 0;
+    return modes[(currentIndex + 1) % modes.length];
+  };
+
+  const handleOnSortedByChanges = (column: SortColumnsEnum) => {
+    setFilters((prev) => {
+      const newDir =
+        column === SortColumnsEnum.NAME
+          ? getNextSortByNameDir(prev.sortDir)
+          : getNextSortByCreatedAtDir(prev.sortDir);
+      return {
+        ...prev,
+        offset: 0,
+        sortBy: newDir ? column : null,
+        sortDir: newDir,
+      };
+    });
+  };
+
   const handleOnDelete = (id: string): void => {
     if (window.confirm('Are you sure you want to delete this attribute?')) {
       AttributesService.deleteAttribute(id)
-        .then(() => setRefresh((prev) => prev + 1))
+        .then(() => setFilters((prev) => ({ ...filters, offset: 0 })))
         .catch(() => alert('Failed to delete attribute'));
     }
   };
@@ -75,6 +105,8 @@ const AttributeListPage = () => {
           // offset didn't change <=> query changed or refresh emitted => we need to get data from offset 0
           offset: filters.offset,
           searchText: filters.searchText ?? undefined,
+          sortBy: filters.sortBy ?? undefined,
+          sortDir: filters.sortDir ?? undefined,
         },
         labels,
       )
@@ -85,7 +117,7 @@ const AttributeListPage = () => {
         )
         .catch(() => alert('Failed to load attributes'));
     }
-  }, [filters, refresh]);
+  }, [filters]);
 
   return (
     <Container className='top-80'>
@@ -98,6 +130,7 @@ const AttributeListPage = () => {
         attributesPaginated={attributesPaginated}
         handleNextAttributesCall={handleNextAttributesCall}
         handleOnDelete={handleOnDelete}
+        handleOnSortedBy={handleOnSortedByChanges}
       />
     </Container>
   );

@@ -1,17 +1,20 @@
 import './attribute-list.scss';
 import AttributeTable from '../attribute-table/attribute-table';
 import { AttributeListModel } from '../../../../shared/model/attribute-list.model';
+import { SortColumnsEnum } from '../../../../shared/enum/sort-columns.enum';
 
 type AttributeListProps = {
   attributesPaginated: AttributeListModel[];
   handleNextAttributesCall: () => void;
   handleOnDelete: (id: string) => void;
+  handleOnSortedBy: (column: SortColumnsEnum) => void;
 };
 
 const AttributeList = ({
   attributesPaginated,
   handleNextAttributesCall,
   handleOnDelete,
+  handleOnSortedBy,
 }: AttributeListProps) => {
   return (
     <>
@@ -27,6 +30,7 @@ const AttributeList = ({
             }
             nextAttributesCallCallback={handleNextAttributesCall}
             onDeleteCallback={handleOnDelete}
+            handleOnSortedBy={handleOnSortedBy}
           />
         </div>
       )}

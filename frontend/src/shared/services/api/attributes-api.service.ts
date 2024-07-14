@@ -11,10 +11,10 @@ export class AttributesApiService {
   static getAttributes = async (
     params: AttributeListQueryParams,
   ): Promise<AttributeListTO> => {
-    const { offset, searchText } = params;
+    const { offset, searchText, sortBy, sortDir } = params;
 
     const attributesResponse = await axios.get<AttributeListTO>(
-      `${ATTRIBUTE_LIST_URL}${queryParams({ offset, searchText })}`,
+      `${ATTRIBUTE_LIST_URL}${queryParams({ offset, searchText, sortBy, sortDir })}`,
     );
 
     return attributesResponse.data;

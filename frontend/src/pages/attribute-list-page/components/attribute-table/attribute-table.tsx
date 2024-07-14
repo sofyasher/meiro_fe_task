@@ -4,12 +4,21 @@ import { AttributeListModel } from '../../../../shared/model/attribute-list.mode
 import { Link } from 'react-router-dom';
 import { useEffect, useRef } from 'react';
 import { routes } from '../../../../shared/routes';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { SortColumnsEnum } from '../../../../shared/enum/sort-columns.enum';
+import { SortDirectionEnum } from '../../../../shared/enum/sort-direction.enum';
+import {
+  faArrowDown,
+  faArrowsUpDown,
+  faArrowUp,
+} from '@fortawesome/free-solid-svg-icons';
 
 type AttributeTableProps = {
   attributesPaginated: AttributeListModel[];
   canCallNextAttributes: boolean;
   nextAttributesCallCallback: () => void;
   onDeleteCallback: (id: string) => void;
+  handleOnSortedBy: (column: SortColumnsEnum) => void;
 };
 
 const AttributeTable = ({
@@ -17,6 +26,7 @@ const AttributeTable = ({
   canCallNextAttributes,
   nextAttributesCallCallback,
   onDeleteCallback,
+  handleOnSortedBy,
 }: AttributeTableProps) => {
   const tableRef = useRef<HTMLDivElement>(null);
 
@@ -54,13 +64,57 @@ const AttributeTable = ({
 
   return (
     <Container ref={tableRef}>
-      <Table striped bordered hover size='sm'>
-        <thead>
+      <Table striped bordered hover size='sm' className='align-middle'>
+        <thead className='align-middle'>
           <tr>
             <th>#</th>
-            <th>Name</th>
-            <th>Labels</th>
-            <th>Created at</th>
+            <th className='w-25'>
+              Name
+              <Button
+                size='sm'
+                className='m-1'
+                onClick={() => handleOnSortedBy(SortColumnsEnum.NAME)}
+              >
+                {attributesPaginated.length > 0 &&
+                attributesPaginated[attributesPaginated.length - 1].meta
+                  .sortBy === SortColumnsEnum.NAME ? (
+                  <>
+                    {attributesPaginated[attributesPaginated.length - 1].meta
+                      .sortDir === SortDirectionEnum.ASC ? (
+                      <FontAwesomeIcon icon={faArrowDown} />
+                    ) : (
+                      <FontAwesomeIcon icon={faArrowUp} />
+                    )}
+                  </>
+                ) : (
+                  <FontAwesomeIcon icon={faArrowsUpDown} />
+                )}
+              </Button>
+            </th>
+            <th className='w-50'>Labels</th>
+            <th>
+              Created at
+              <Button
+                size='sm'
+                className='m-1'
+                onClick={() => handleOnSortedBy(SortColumnsEnum.CREATED_AT)}
+              >
+                {attributesPaginated.length > 0 &&
+                attributesPaginated[attributesPaginated.length - 1].meta
+                  .sortBy === SortColumnsEnum.CREATED_AT ? (
+                  <>
+                    {attributesPaginated[attributesPaginated.length - 1].meta
+                      .sortDir === SortDirectionEnum.ASC ? (
+                      <FontAwesomeIcon icon={faArrowDown} />
+                    ) : (
+                      <FontAwesomeIcon icon={faArrowUp} />
+                    )}
+                  </>
+                ) : (
+                  <FontAwesomeIcon icon={faArrowsUpDown} />
+                )}
+              </Button>
+            </th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -81,7 +135,10 @@ const AttributeTable = ({
                   </td>
                   <td>{new Date(attribute.createdAt).toLocaleDateString()}</td>
                   <td>
-                    <Button onClick={() => onDeleteCallback(attribute.id)}>
+                    <Button
+                      variant='danger'
+                      onClick={() => onDeleteCallback(attribute.id)}
+                    >
                       Delete
                     </Button>
                   </td>
