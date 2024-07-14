@@ -1,6 +1,6 @@
 import './attribute-detail.scss';
 import { Button, Card, Container } from 'react-bootstrap';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { AttributeDataModel } from '../../shared/model/attribute-data.model';
 import { routes } from '../../shared/routes';
@@ -19,6 +19,8 @@ const AttributeDetail = () => {
     }
   };
 
+  const navigateToList = () => navigate(routes.attributes);
+
   useEffect(() => {
     if (!!id) {
       AttributesService.getAllLabelsAndAttributeById(id)
@@ -32,7 +34,7 @@ const AttributeDetail = () => {
       {!!attribute ? (
         <Container>
           <Container className='d-flex align-items-center justify-content-between mb-4 p-0'>
-            <Link to={routes.attributes}>Back</Link>
+            <Button onClick={navigateToList}>Back</Button>
             <Button variant='danger' onClick={() => handleOnDelete(id!)}>
               Delete
             </Button>

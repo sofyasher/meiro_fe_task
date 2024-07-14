@@ -7,7 +7,7 @@ import { LocalStorageService } from '../../../services/local-storage.service';
 
 const Navigation = () => {
   const navigate = useNavigate();
-  const navigateHomeAndClenLocalStorage = () => {
+  const navigateHomeAndCleanLocalStorage = () => {
     LocalStorageService.removeSearchText();
     navigate(routes.home);
   };
@@ -15,7 +15,10 @@ const Navigation = () => {
   return (
     <Navbar expand='lg' className='bg-body-tertiary fixed-top'>
       <Container fluid>
-        <Navbar.Brand onClick={navigateHomeAndClenLocalStorage}>
+        <Navbar.Brand
+          className='cursor-pointer'
+          onClick={navigateHomeAndCleanLocalStorage}
+        >
           Home
         </Navbar.Brand>
         <Navbar.Toggle aria-controls='navbarScroll' />
