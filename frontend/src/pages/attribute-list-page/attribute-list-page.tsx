@@ -89,7 +89,10 @@ const AttributeListPage = () => {
   const handleOnDelete = (id: string): void => {
     if (window.confirm('Are you sure you want to delete this attribute?')) {
       AttributesService.deleteAttribute(id)
-        .then(() => setFilters((prev) => ({ ...prev, offset: 0 })))
+        .then(() => {
+          setFilters((prev) => ({ ...prev, offset: 0 }));
+          alert('Successfully deleted!');
+        })
         .catch(() => alert('Failed to delete attribute'));
     }
   };

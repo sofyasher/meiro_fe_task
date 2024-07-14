@@ -14,7 +14,10 @@ const AttributeDetail = () => {
   const onDelete = (id: string) => {
     if (window.confirm('Are you sure you want to delete this attribute?')) {
       AttributesService.deleteAttribute(id)
-        .then(() => navigate(routes.attributes))
+        .then(() => {
+          navigate(routes.attributes);
+          alert('Successfully deleted!');
+        })
         .catch(() => alert('Failed to delete attribute'));
     }
   };
