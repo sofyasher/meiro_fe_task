@@ -2,6 +2,8 @@ import './attribute-search.scss';
 import { Container, Form } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 
+const DEBOUNCE_TIME = 500;
+
 type AttributeSearchProps = {
   initialValue?: string;
   onSearchCallback: (searchText: string) => void;
@@ -16,7 +18,7 @@ const AttributeSearch = ({
   useEffect(() => {
     const runSearch = setTimeout(() => {
       onSearchCallback(searchText);
-    }, 500);
+    }, DEBOUNCE_TIME);
 
     return () => clearTimeout(runSearch);
   }, [searchText]);

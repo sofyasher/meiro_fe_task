@@ -28,9 +28,9 @@ const AttributeList = ({
                     .hasNextPage
                 : true
             }
-            nextAttributesCallCallback={handleNextAttributesCall}
-            onDeleteCallback={handleOnDelete}
-            handleOnSortedBy={handleOnSortedBy}
+            onNextAttributesCallCallback={handleNextAttributesCall}
+            onAttributeDeleteCallback={handleOnDelete}
+            onSortedByChangedCallback={handleOnSortedBy}
           />
         </div>
       )}

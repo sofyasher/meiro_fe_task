@@ -9,6 +9,9 @@ const Navigation = () => {
   const navigate = useNavigate();
   const navigateHomeAndCleanLocalStorage = () => {
     LocalStorageService.removeSearchText();
+    LocalStorageService.removeSortDir();
+    LocalStorageService.removeSortBy();
+
     navigate(routes.home);
   };
 

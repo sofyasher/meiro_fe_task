@@ -16,17 +16,17 @@ import {
 type AttributeTableProps = {
   attributesPaginated: AttributeListModel[];
   canCallNextAttributes: boolean;
-  nextAttributesCallCallback: () => void;
-  onDeleteCallback: (id: string) => void;
-  handleOnSortedBy: (column: SortColumnsEnum) => void;
+  onNextAttributesCallCallback: () => void;
+  onAttributeDeleteCallback: (id: string) => void;
+  onSortedByChangedCallback: (column: SortColumnsEnum) => void;
 };
 
 const AttributeTable = ({
   attributesPaginated,
   canCallNextAttributes,
-  nextAttributesCallCallback,
-  onDeleteCallback,
-  handleOnSortedBy,
+  onNextAttributesCallCallback,
+  onAttributeDeleteCallback,
+  onSortedByChangedCallback,
 }: AttributeTableProps) => {
   const tableRef = useRef<HTMLDivElement>(null);
 
@@ -35,6 +35,7 @@ const AttributeTable = ({
     return window.innerHeight > rect.y + rect.height;
   };
 
+  // initial loading of attributes, until they fill whole page height
   useEffect(() => {
     if (
       attributesPaginated.length > 0 &&
@@ -43,7 +44,7 @@ const AttributeTable = ({
     ) {
       isTableBottomAboveWindowBottomBorder(tableRef.current) &&
         canCallNextAttributes &&
-        nextAttributesCallCallback();
+        onNextAttributesCallCallback();
     }
   }, [attributesPaginated]);
 
@@ -52,7 +53,7 @@ const AttributeTable = ({
       if (tableRef.current) {
         isTableBottomAboveWindowBottomBorder(tableRef.current) &&
           canCallNextAttributes &&
-          nextAttributesCallCallback();
+          onNextAttributesCallCallback();
       }
     };
 
@@ -60,7 +61,7 @@ const AttributeTable = ({
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [nextAttributesCallCallback]);
+  }, [onNextAttributesCallCallback]);
 
   return (
     <Container ref={tableRef}>
@@ -73,7 +74,7 @@ const AttributeTable = ({
               <Button
                 size='sm'
                 className='m-1'
-                onClick={() => handleOnSortedBy(SortColumnsEnum.NAME)}
+                onClick={() => onSortedByChangedCallback(SortColumnsEnum.NAME)}
               >
                 {attributesPaginated.length > 0 &&
                 attributesPaginated[attributesPaginated.length - 1].meta
@@ -97,7 +98,9 @@ const AttributeTable = ({
               <Button
                 size='sm'
                 className='m-1'
-                onClick={() => handleOnSortedBy(SortColumnsEnum.CREATED_AT)}
+                onClick={() =>
+                  onSortedByChangedCallback(SortColumnsEnum.CREATED_AT)
+                }
               >
                 {attributesPaginated.length > 0 &&
                 attributesPaginated[attributesPaginated.length - 1].meta
@@ -130,14 +133,14 @@ const AttributeTable = ({
                     </Link>
                   </td>
                   <td>
-                    {attribute.labels &&
+                    {attribute.labels.length > 0 &&
                       attribute.labels.map((label) => label.name).join(', ')}
                   </td>
                   <td>{new Date(attribute.createdAt).toLocaleDateString()}</td>
                   <td>
                     <Button
                       variant='danger'
-                      onClick={() => onDeleteCallback(attribute.id)}
+                      onClick={() => onAttributeDeleteCallback(attribute.id)}
                     >
                       Delete
                     </Button>

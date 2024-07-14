@@ -21,8 +21,8 @@ const AttributeListPage = () => {
   const initialFilters: Filters = {
     offset: 0,
     searchText: LocalStorageService.getSearchText() ?? null,
-    sortBy: null,
-    sortDir: null,
+    sortBy: LocalStorageService.getSortBy() ?? null,
+    sortDir: LocalStorageService.getSortDir() ?? null,
   };
 
   const [labels, setLabels] = useState<LabelModel[]>([]);
@@ -58,10 +58,10 @@ const AttributeListPage = () => {
   };
 
   const getNextSortByNameDir = (
-    current: SortDirectionEnum | null,
+    prevDir: SortDirectionEnum | null,
   ): SortDirectionEnum | null => {
     const modes = [SortDirectionEnum.ASC, SortDirectionEnum.DESC];
-    const currentIndex = modes.findIndex((mode) => mode === current) ?? 0;
+    const currentIndex = modes.findIndex((mode) => mode === prevDir) ?? 0;
     return modes[(currentIndex + 1) % modes.length];
   };
 
@@ -71,6 +71,12 @@ const AttributeListPage = () => {
         column === SortColumnsEnum.NAME
           ? getNextSortByNameDir(prev.sortDir)
           : getNextSortByCreatedAtDir(prev.sortDir);
+
+      !!newDir
+        ? LocalStorageService.setSortDir(newDir)
+        : LocalStorageService.removeSortDir();
+      LocalStorageService.setSortBy(column);
+
       return {
         ...prev,
         offset: 0,
@@ -83,7 +89,7 @@ const AttributeListPage = () => {
   const handleOnDelete = (id: string): void => {
     if (window.confirm('Are you sure you want to delete this attribute?')) {
       AttributesService.deleteAttribute(id)
-        .then(() => setFilters((prev) => ({ ...filters, offset: 0 })))
+        .then(() => setFilters((prev) => ({ ...prev, offset: 0 })))
         .catch(() => alert('Failed to delete attribute'));
     }
   };

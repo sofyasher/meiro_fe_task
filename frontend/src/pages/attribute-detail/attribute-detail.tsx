@@ -11,7 +11,7 @@ const AttributeDetail = () => {
   const navigate = useNavigate();
   const [attribute, setAttribute] = useState<AttributeDataModel | null>(null);
 
-  const handleOnDelete = (id: string) => {
+  const onDelete = (id: string) => {
     if (window.confirm('Are you sure you want to delete this attribute?')) {
       AttributesService.deleteAttribute(id)
         .then(() => navigate(routes.attributes))
@@ -35,7 +35,7 @@ const AttributeDetail = () => {
         <Container>
           <Container className='d-flex align-items-center justify-content-between mb-4 p-0'>
             <Button onClick={navigateToList}>Back</Button>
-            <Button variant='danger' onClick={() => handleOnDelete(id!)}>
+            <Button variant='danger' onClick={() => onDelete(id!)}>
               Delete
             </Button>
           </Container>
