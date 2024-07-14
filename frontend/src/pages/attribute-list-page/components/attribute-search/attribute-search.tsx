@@ -1,6 +1,6 @@
 import './attribute-search.scss';
-import { Button, Container, Form } from 'react-bootstrap';
-import { useState } from 'react';
+import { Container, Form } from 'react-bootstrap';
+import { useEffect, useState } from 'react';
 
 type AttributeSearchProps = {
   initialValue?: string;
@@ -11,7 +11,15 @@ const AttributeSearch = ({
   initialValue,
   onSearchCallback,
 }: AttributeSearchProps) => {
-  const [searchText, setSearchText] = useState<string>('');
+  const [searchText, setSearchText] = useState<string>(initialValue ?? '');
+
+  useEffect(() => {
+    const runSearch = setTimeout(() => {
+      onSearchCallback(searchText);
+    }, 500);
+
+    return () => clearTimeout(runSearch);
+  }, [searchText]);
 
   return (
     <Container className='d-flex justify-content-between gap-3'>
@@ -20,7 +28,6 @@ const AttributeSearch = ({
         defaultValue={initialValue}
         onChange={(event) => setSearchText(event.target.value)}
       ></Form.Control>
-      <Button onClick={() => onSearchCallback(searchText)}>Search</Button>
     </Container>
   );
 };
