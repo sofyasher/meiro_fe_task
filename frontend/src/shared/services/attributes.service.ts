@@ -1,14 +1,12 @@
 import { AttributeListModel } from '../model/attribute-list.model';
 import { LabelsApiService } from './api/labels-api.service';
-import {
-  AttributesApiService,
-  AttributesListQueryParams,
-} from './api/attributes-api.service';
+import { AttributesApiService } from './api/attributes-api.service';
 import { AttributeListMapper } from '../mapper/attribute-list.mapper';
 import { LabelModel } from '../model/label.model';
 import { LabelDetailMapper } from '../mapper/label-detail.mapper';
 import { AttributeDataModel } from '../model/attribute-data.model';
 import { AttributeDetailMapper } from '../mapper/attribute-detail.mapper';
+import { AttributeListQueryParams } from '../to/attribute-list-query-params.to';
 
 export class AttributesService {
   static getAllLabelsAndAttributeById = async (
@@ -38,7 +36,7 @@ export class AttributesService {
   };
 
   static getNextAttributesAndSupplementByLabels = async (
-    params: AttributesListQueryParams,
+    params: AttributeListQueryParams,
     labels: LabelModel[],
   ): Promise<AttributeListModel> => {
     const attributes = await AttributesApiService.getAttributes(params);

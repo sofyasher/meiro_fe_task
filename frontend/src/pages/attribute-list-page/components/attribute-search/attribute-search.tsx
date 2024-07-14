@@ -4,23 +4,23 @@ import { useState } from 'react';
 
 type AttributeSearchProps = {
   initialValue?: string;
-  onSearchCallback: (searchQuery: string) => void;
+  onSearchCallback: (searchText: string) => void;
 };
 
 const AttributeSearch = ({
   initialValue,
   onSearchCallback,
 }: AttributeSearchProps) => {
-  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [searchText, setSearchText] = useState<string>('');
 
   return (
     <Container className='d-flex justify-content-between gap-3'>
       <Form.Control
         placeholder='Search...'
         defaultValue={initialValue}
-        onChange={(event) => setSearchQuery(event.target.value)}
+        onChange={(event) => setSearchText(event.target.value)}
       ></Form.Control>
-      <Button onClick={() => onSearchCallback(searchQuery)}>Search</Button>
+      <Button onClick={() => onSearchCallback(searchText)}>Search</Button>
     </Container>
   );
 };

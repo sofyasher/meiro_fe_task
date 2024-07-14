@@ -1,24 +1,15 @@
-import { SortColumnsEnum } from '../../enum/sort-columns.enum';
-import { SortDirectionEnum } from '../../enum/sort-direction.enum';
 import { AttributeListTO } from '../../to/attribute-list.to';
 import { API_URL } from '../../api';
 import { AttributeTO } from '../../to/attribute.to';
 import { queryParams } from '../../utils';
 import axios from 'axios';
+import { AttributeListQueryParams } from '../../to/attribute-list-query-params.to';
 
 const ATTRIBUTE_LIST_URL = `${API_URL}/attributes`;
 
-export interface AttributesListQueryParams {
-  offset?: number;
-  limit?: number;
-  searchText?: string;
-  sortBy?: SortColumnsEnum;
-  sortDir?: SortDirectionEnum;
-}
-
 export class AttributesApiService {
   static getAttributes = async (
-    params: AttributesListQueryParams,
+    params: AttributeListQueryParams,
   ): Promise<AttributeListTO> => {
     const { offset, searchText } = params;
 
