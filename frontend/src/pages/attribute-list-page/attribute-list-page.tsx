@@ -32,17 +32,17 @@ const AttributeListPage = () => {
   }, []);
 
   const handleNextAttributesCall = (): void => {
-    setAttributesOffset(
-      attributesPaginated.length > 0
-        ? attributesPaginated[attributesPaginated.length - 1].meta.offset + 1
-        : 0,
+    setAttributesOffset((prev) =>
+      attributesPaginated.length > 0 ? prev + 1 : 0,
     );
   };
 
   const handleOnDelete = (id: string): void => {
-    AttributesService.deleteAttribute(id)
-      .then(() => setRefresh((prev) => prev + 1))
-      .catch(() => alert('Failed to delete attribute'));
+    if (window.confirm('Are you sure you want to delete this attribute?')) {
+      AttributesService.deleteAttribute(id)
+        .then(() => setRefresh((prev) => prev + 1))
+        .catch(() => alert('Failed to delete attribute'));
+    }
   };
 
   useEffect(() => {

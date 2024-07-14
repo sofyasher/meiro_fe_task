@@ -12,9 +12,11 @@ const AttributeDetail = () => {
   const [attribute, setAttribute] = useState<AttributeDataModel | null>(null);
 
   const handleOnDelete = (id: string) => {
-    AttributesService.deleteAttribute(id)
-      .then(() => navigate(routes.attributes))
-      .catch(() => alert('Failed to delete attribute'));
+    if (window.confirm('Are you sure you want to delete this attribute?')) {
+      AttributesService.deleteAttribute(id)
+        .then(() => navigate(routes.attributes))
+        .catch(() => alert('Failed to delete attribute'));
+    }
   };
 
   useEffect(() => {
