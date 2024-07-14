@@ -2,7 +2,7 @@ import './attribute-table.scss';
 import { Button, Container, Table } from 'react-bootstrap';
 import { AttributeListModel } from '../../../../shared/model/attribute-list.model';
 import { Link } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { routes } from '../../../../shared/routes';
 
 type AttributeTableProps = {
@@ -18,12 +18,31 @@ const AttributeTable = ({
   nextAttributesCallCallback,
   onDeleteCallback,
 }: AttributeTableProps) => {
+  const tableRef = useRef<HTMLDivElement>(null);
+
+  const isTableBottomAboveWindowBottomBorder = (tableRef: HTMLDivElement) => {
+    const rect = tableRef.getBoundingClientRect();
+    return window.innerHeight > rect.y + rect.height;
+  };
+
+  useEffect(() => {
+    if (
+      attributesPaginated.length > 0 &&
+      canCallNextAttributes &&
+      tableRef.current
+    ) {
+      isTableBottomAboveWindowBottomBorder(tableRef.current) &&
+        canCallNextAttributes &&
+        nextAttributesCallCallback();
+    }
+  }, [attributesPaginated]);
+
   useEffect(() => {
     const handleScroll = () => {
-      const { scrollTop, clientHeight, scrollHeight } =
-        document.documentElement;
-      if (scrollTop + clientHeight >= scrollHeight) {
-        canCallNextAttributes && nextAttributesCallCallback();
+      if (tableRef.current) {
+        isTableBottomAboveWindowBottomBorder(tableRef.current) &&
+          canCallNextAttributes &&
+          nextAttributesCallCallback();
       }
     };
 
@@ -34,7 +53,7 @@ const AttributeTable = ({
   }, [nextAttributesCallCallback]);
 
   return (
-    <Container>
+    <Container ref={tableRef}>
       <Table striped bordered hover size='sm'>
         <thead>
           <tr>

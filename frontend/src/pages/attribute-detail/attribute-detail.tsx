@@ -13,7 +13,7 @@ const AttributeDetail = () => {
 
   const handleOnDelete = (id: string) => {
     AttributesService.deleteAttribute(id)
-      .then((response) => navigate(routes.attributes))
+      .then(() => navigate(routes.attributes))
       .catch(() => alert('Failed to delete attribute'));
   };
 

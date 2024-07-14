@@ -31,21 +31,19 @@ const AttributeListPage = () => {
     LocalStorageService.setSearchQuery(searchQuery);
   }, []);
 
-  const handleNextAttributesCall = useCallback((): void => {
+  const handleNextAttributesCall = (): void => {
     setAttributesOffset(
       attributesPaginated.length > 0
         ? attributesPaginated[attributesPaginated.length - 1].meta.offset + 1
         : 0,
     );
-  }, []);
+  };
 
-  const handleOnDelete = useCallback((id: string): void => {
+  const handleOnDelete = (id: string): void => {
     AttributesService.deleteAttribute(id)
-      .then((response) => {
-        setRefresh((prev) => prev + 1);
-      })
+      .then(() => setRefresh((prev) => prev + 1))
       .catch(() => alert('Failed to delete attribute'));
-  }, []);
+  };
 
   useEffect(() => {
     AttributesService.getAllLabelsAndFirstOffsetOfAttributes()
