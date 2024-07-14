@@ -7,14 +7,14 @@ type AttributeListProps = {
   attributesPaginated: AttributeListModel[];
   handleNextAttributesCall: () => void;
   handleOnDelete: (id: string) => void;
-  handleOnSortedBy: (column: SortColumnsEnum) => void;
+  handleOnSortedByChanged: (column: SortColumnsEnum) => void;
 };
 
 const AttributeList = ({
   attributesPaginated,
   handleNextAttributesCall,
   handleOnDelete,
-  handleOnSortedBy,
+  handleOnSortedByChanged,
 }: AttributeListProps) => {
   return (
     <>
@@ -30,7 +30,7 @@ const AttributeList = ({
             }
             onNextAttributesCallCallback={handleNextAttributesCall}
             onAttributeDeleteCallback={handleOnDelete}
-            onSortedByChangedCallback={handleOnSortedBy}
+            onSortedByChangedCallback={handleOnSortedByChanged}
           />
         </div>
       )}

@@ -3,31 +3,34 @@ import { SortColumnsEnum } from '../enum/sort-columns.enum';
 
 export class LocalStorageService {
   private static SEARCH_TEXT_KEY = 'searchText';
-  private static SORT_BY = 'sortBy';
-  private static SORT_DIR = 'sortDir';
+  private static SORT_BY_KEY = 'sortBy';
+  private static SORT_DIR_KEY = 'sortDir';
 
   static getSortBy = () => {
-    return LocalStorageService.getItem(LocalStorageService.SORT_BY);
+    return LocalStorageService.getItem(LocalStorageService.SORT_BY_KEY);
   };
 
   static setSortBy = (sortBy: SortColumnsEnum) => {
-    return LocalStorageService.setItem(LocalStorageService.SORT_BY, sortBy);
+    return LocalStorageService.setItem(LocalStorageService.SORT_BY_KEY, sortBy);
   };
 
   static removeSortBy = () => {
-    return LocalStorageService.removeItem(LocalStorageService.SORT_BY);
+    return LocalStorageService.removeItem(LocalStorageService.SORT_BY_KEY);
   };
 
   static getSortDir = () => {
-    return LocalStorageService.getItem(LocalStorageService.SORT_DIR);
+    return LocalStorageService.getItem(LocalStorageService.SORT_DIR_KEY);
   };
 
   static setSortDir = (sortDir: SortDirectionEnum) => {
-    return LocalStorageService.setItem(LocalStorageService.SORT_DIR, sortDir);
+    return LocalStorageService.setItem(
+      LocalStorageService.SORT_DIR_KEY,
+      sortDir,
+    );
   };
 
   static removeSortDir = () => {
-    return LocalStorageService.removeItem(LocalStorageService.SORT_DIR);
+    return LocalStorageService.removeItem(LocalStorageService.SORT_DIR_KEY);
   };
 
   static getSearchText = () => {

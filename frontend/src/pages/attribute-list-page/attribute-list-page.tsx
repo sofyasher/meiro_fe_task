@@ -94,6 +94,8 @@ const AttributeListPage = () => {
     }
   };
 
+  // here is some problem in these 2 effects which causes more requests on init,
+  // but I didn't manage to fix it :(
   useEffect(() => {
     AttributesService.getAllLabelsAndFirstOffsetOfAttributes()
       .then(({ attributes, labels }) => {
@@ -107,8 +109,6 @@ const AttributeListPage = () => {
     if (labels.length > 0) {
       AttributesService.getNextAttributesAndSupplementByLabels(
         {
-          // offset changed => we need to get next data,
-          // offset didn't change <=> query changed or refresh emitted => we need to get data from offset 0
           offset: filters.offset,
           searchText: filters.searchText ?? undefined,
           sortBy: filters.sortBy ?? undefined,
@@ -136,7 +136,7 @@ const AttributeListPage = () => {
         attributesPaginated={attributesPaginated}
         handleNextAttributesCall={handleNextAttributesCall}
         handleOnDelete={handleOnDelete}
-        handleOnSortedBy={handleOnSortedByChanges}
+        handleOnSortedByChanged={handleOnSortedByChanges}
       />
     </Container>
   );

@@ -1,7 +1,8 @@
 import { API_URL } from '../../api';
 import { queryParams } from '../../utils';
-import { LabelListTO, LabelTO } from '../../to/label.to';
+import { LabelTO } from '../../to/label.to';
 import axios from 'axios';
+import { LabelListTO } from '../../to/label-list.to';
 
 const LABEL_LIST_URL = `${API_URL}/labels`;
 
